@@ -26,7 +26,6 @@ def new_message(role, content):
 def transcribe_audio_file(path):
     audio_file = load_audio_file(path)
     return transcribe_file(audio_file)
-    return prompt
 
 
 def start_chat():
