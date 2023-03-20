@@ -23,11 +23,9 @@ def new_message(role, content):
     return {"role": role, "content": content}
 
 
-def record_prompt(rec):
-    input("Press enter when you're finished speaking")
-    tmp_file = rec.stop()
-    audio_file = load_audio_file(tmp_file)
-    prompt = transcribe_file(audio_file)
+def transcribe_audio_file(path):
+    audio_file = load_audio_file(path)
+    return transcribe_file(audio_file)
     return prompt
 
 
@@ -48,7 +46,11 @@ def start_chat():
         elif text == "quit":
             break
 
-        prompt = record_prompt(rec)
+        input("Press enter when you're finished speaking")
+
+        tmp_file = rec.stop()
+        prompt = transcribe_audio_file(tmp_file)
+
         messages.append(new_message("user", prompt))
         print("\n> You:", prompt)
 
@@ -58,8 +60,9 @@ def start_chat():
         her_msg = response["choices"][0]["message"]
         her_resp = her_msg["content"]
         print("\nHer:", her_resp)
-        her_voice.say(her_resp, background=False)
         messages.append(her_msg)
+
+        her_voice.say(her_resp, background=False)
 
 
 if __name__ == "__main__":
