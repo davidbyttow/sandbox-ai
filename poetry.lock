@@ -584,6 +584,25 @@ files = [
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
+name = "clip"
+version = "1.0"
+description = ""
+category = "main"
+optional = false
+python-versions = "*"
+files = []
+develop = false
+
+[package.extras]
+dev = ["pytest"]
+
+[package.source]
+type = "git"
+url = "https://github.com/openai/CLIP.git"
+reference = "HEAD"
+resolved_reference = "a9b1bf5920416aaeaec965c25dd9e8f98c864f16"
+
+[[package]]
 name = "cmake"
 version = "3.26.1"
 description = "CMake is an open-source, cross-platform family of tools designed to build, test and package software"
@@ -1065,6 +1084,21 @@ sftp = ["paramiko"]
 smb = ["smbprotocol"]
 ssh = ["paramiko"]
 tqdm = ["tqdm"]
+
+[[package]]
+name = "ftfy"
+version = "6.1.1"
+description = "Fixes mojibake and other problems with Unicode, after the fact"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4"
+files = [
+    {file = "ftfy-6.1.1-py3-none-any.whl", hash = "sha256:0ffd33fce16b54cccaec78d6ec73d95ad370e5df5a25255c8966a6147bd667ca"},
+    {file = "ftfy-6.1.1.tar.gz", hash = "sha256:bfc2019f84fcd851419152320a6375604a0f1459c281b5b199b2cd0d2e727f8f"},
+]
+
+[package.dependencies]
+wcwidth = ">=0.2.5"
 
 [[package]]
 name = "huggingface-hub"
@@ -4150,4 +4184,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.4,<3.12"
-content-hash = "1198a25b0cf7088cc693f0acb2f1ef22a833c3e9a9eb59de76d57cc65449bdb6"
+content-hash = "0166e24bbca664b74a8dc7b37236faf63195dab53ca67b05a3e7569edb121cc4"
