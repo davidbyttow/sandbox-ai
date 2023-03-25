@@ -1,5 +1,4 @@
 import torch
-import torchvision.transforms as transforms
 from PIL import Image
 from clip import clip
 
@@ -50,9 +49,9 @@ def main():
             similarity_scores = get_similarity_scores(image_features, tokenized_descriptions, device, model)
             top_description_index = similarity_scores.argmax()
             top_description = descriptions[top_description_index]
-            print(f"The highest-scoring description for the screenshot is: '{top_description}'")
+            print(f"The highest-scoring description for the screenshot is: '{top_description}'\n")
         except Exception as e:
-            print(f"Error processing the image: {e}")
+            print(f"Error processing the image: {e}\n")
 
 if __name__ == "__main__":
     main()
