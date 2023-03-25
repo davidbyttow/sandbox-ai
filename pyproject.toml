@@ -9,8 +9,8 @@ packages = [{include = "sandbox_ai"}]
 [tool.poetry.dependencies]
 python = ">=3.10.4,<3.12"
 jupyter = "^1.0.0"
-torch = "^2.0.0"
-torchvision = "^0.15.1"
+torch = "^1.13.1"
+torchvision = "^0.14.1"
 numpy = "^1.24.2"
 matplotlib = "^3.7.1"
 pandas = "^1.5.3"
@@ -25,9 +25,13 @@ elevenlabslib = "^0.3.0"
 soundfile = "^0.12.1"
 sounddevice = "^0.4.6"
 pyaudio = "^0.2.13"
-pillow = "^9.4.0"
-clip = {git = "https://github.com/openai/CLIP.git"}
-ftfy = "^6.1.1"
+diffusers = "^0.14.0"
+accelerate = "^0.17.1"
+tiktoken = "^0.3.2"
+faiss-cpu = "^1.7.3"
+langchain = "^0.0.123"
+pdfreader = "^0.1.12"
+pypdf2 = "^3.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
