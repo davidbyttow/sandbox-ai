@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Website Generator</title>
+    <style>
+        #page-preview {
+            border: 1px solid black;
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Website Generator</h1>
+    <label for="feedback">Enter your feedback:</label>
+    <textarea id="feedback" rows="4" cols="50"></textarea><br>
+    <button onclick="send_feedback()">Submit Feedback</button>
+
+    <h2>Page Preview</h2>
+    <iframe id="page-preview"></iframe>
+
+    <script>
+        function update_page(data) {
+            const pagePreview = document.getElementById('page-preview');
+            const previewDoc = pagePreview.contentWindow.document;
+
+            previewDoc.open();
+            previewDoc.write(data.doc)
+            //previewDoc.write('<!DOCTYPE html><html><head><style>' + data.css + '</style></head><body>' + data.html + '</body></html>');
+
+            // const scriptElement = previewDoc.createElement('script');
+            // scriptElement.innerHTML = data.js.replace(/\\n/g, '\n'); // Replace escaped new lines with actual new lines
+            // previewDoc.body.appendChild(scriptElement);
+
+            previewDoc.close();
+        }
+
+        async function send_feedback() {
+        let feedback = document.getElementById("feedback").value;
+
+        // Get the current HTML, CSS, and JS from the page-preview element
+        const pagePreview = document.getElementById('page-preview');
+        const previewDoc = pagePreview.contentWindow.document;
+
+        let current_doc = previewDoc.documentElement.outerHTML
+        // let current_html = previewDoc.body.innerHTML;
+        // let current_css = previewDoc.querySelector('style') ? previewDoc.querySelector('style').innerText : '';
+        // let current_js = previewDoc.querySelector('script') ? previewDoc.querySelector('script').innerHTML : '';
+
+        const response = await fetch('/get_feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                feedback: feedback,
+                doc: current_doc
+                // html: current_html,
+                // css: current_css,
+                // js: current_js
+            })
+        });
+
+        const data = await response.json();
+        update_page(data);
+        }
+
+    </script>
+</body>
+</html>
