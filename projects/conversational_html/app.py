@@ -36,30 +36,29 @@ User Feedback: {feedback}
 Current DOC: {doc}
 
 Read the `User Feedback` and change the `Current DOC` based on the feedback.
-Note this is the entire page, and includes embedded CSS and JS. Update it with the feedback, ensuring it still is valid.
-Return the result in the following format (replace the <INSERT HERE> placeholder):
+Update it with the feedback, ensuring it still is valid.
+Return the resultant HTML code (with styles and script embedded). DO NOT INCLUDE ANYTHING ELSE.
 
-Updated DOC:<INSERT UPDATED DOC HERE>
+Response must start with <html>
+Response must end with </html>
 """
 
-    # Call the GPT-3 API to get the response
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=2000,
-        n=1,
-        stop=None,
-        temperature=0.7,
+    # Call the GPT-3.5 API to get the response
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+        {"role": "system", "content": "You are a code generator"},
+        {"role": "user", "content": prompt}
+        ]
     )
 
     if debug:
         print(f'Prompt: {prompt}')
         print(f'Response: {response}')
 
-    content = response.choices[0].text.strip().split("\n")
-
     try:
-        updated_doc = content[content.index("Updated DOC:") + 1]
+        updated_doc = response.choices[0].message.content
     except ValueError:
         updated_doc = doc # return old one
 
