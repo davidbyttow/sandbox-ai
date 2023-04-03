@@ -3,7 +3,6 @@ import os
 import re
 from flask import Flask, render_template, request, jsonify
 
-# Set up your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 debug = True
@@ -11,16 +10,16 @@ debug = True
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route('/get_feedback', methods=['POST'])
+@app.route("/get_feedback", methods=["POST"])
 def get_feedback():
     data = request.get_json()
-    feedback = data.get('feedback')
-    doc = data.get('doc')
+    feedback = data.get("feedback")
+    doc = data.get("doc")
     # html = data.get('html')
     # css = data.get('css')
     # js = data.get('js')
@@ -28,6 +27,7 @@ def get_feedback():
     # updated_page = process_feedback(feedback, html, css, js)
     updated_page = process_feedback_doc(feedback, doc)
     return jsonify(updated_page)
+
 
 def process_feedback_doc(feedback, doc):
     # Define a prompt for GPT-3 based on the feedback, and the entire doc
@@ -48,23 +48,22 @@ Response must end with </html>
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-        {"role": "system", "content": "You are a code generator"},
-        {"role": "user", "content": prompt}
-        ]
+            {"role": "system", "content": "You are a code generator"},
+            {"role": "user", "content": prompt},
+        ],
     )
 
     if debug:
-        print(f'Prompt: {prompt}')
-        print(f'Response: {response}')
+        print(f"Prompt: {prompt}")
+        print(f"Response: {response}")
 
     try:
         updated_doc = response.choices[0].message.content
     except ValueError:
-        updated_doc = doc # return old one
+        updated_doc = doc  # return old one
 
-    return {
-        'doc': updated_doc
-    }
+    return {"doc": updated_doc}
+
 
 # def process_feedback(feedback, html, css, js):
 #     # Define a prompt for GPT-3 based on the feedback, current HTML, CSS, and JavaScript
@@ -125,5 +124,5 @@ Response must end with </html>
 #     }
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=True)

@@ -24,13 +24,17 @@ def get_image_features(image_path, preprocess, device, model):
 def get_similarity_scores(image_features, tokenized_descriptions, device, model):
     with torch.no_grad():
         text_features = model.encode_text(tokenized_descriptions)
-        similarity = (100.0 * image_features.matmul(text_features.T)
-                      ).softmax(dim=-1).cpu().numpy()
+        similarity = (
+            (100.0 * image_features.matmul(text_features.T))
+            .softmax(dim=-1)
+            .cpu()
+            .numpy()
+        )
     return similarity
 
 
 def generate_html(prompt, debug):
-    with open('start.html', 'r') as f:
+    with open("start.html", "r") as f:
         start_html = f.read()
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -49,18 +53,20 @@ def generate_html(prompt, debug):
         print("End GPT Output ==========\n")
 
     # Find the positions of 'Modified HTML:' and 'Changes made:' while ignoring capitalization
-    modified_html_pos = html_and_description.lower().find('modified html:')
-    changes_made_pos = html_and_description.lower().find('changes made:')
+    modified_html_pos = html_and_description.lower().find("modified html:")
+    changes_made_pos = html_and_description.lower().find("changes made:")
 
     if modified_html_pos != -1 and changes_made_pos != -1:
         # Split the html_and_description into HTML code and description
-        html_code = html_and_description[modified_html_pos +
-                                         len('Modified HTML:'):changes_made_pos].strip()
-        description = html_and_description[changes_made_pos +
-                                           len('Changes made:'):].strip()
+        html_code = html_and_description[
+            modified_html_pos + len("Modified HTML:") : changes_made_pos
+        ].strip()
+        description = html_and_description[
+            changes_made_pos + len("Changes made:") :
+        ].strip()
 
         # Write the modified HTML to the output file
-        with open('output.html', 'w') as f:
+        with open("output.html", "w") as f:
             f.write(html_code.strip())
 
         # Print the description for the user
@@ -84,24 +90,27 @@ def main():
         "monochromatic design with a single color palette and subtle variations in shade",
         "grid-based layout with content organized into a structured grid format",
         "complex navigation with multiple menus, dropdowns, or nested links",
-        "simple navigation with a clean and intuitive menu structure"
+        "simple navigation with a clean and intuitive menu structure",
     ]
     tokenized_descriptions = clip.tokenize(descriptions).to(device)
 
-    print("This program uses GPT to generate the HTML for a basic blog page, relying on a provided screenshot of a website for aesthetic inspiration.\n\n")
+    print(
+        "This program uses GPT to generate the HTML for a basic blog page, relying on a provided screenshot of a website for aesthetic inspiration.\n\n"
+    )
 
     while True:
         image_path = input(
-            "Enter the path to the screenshot of the website (or type 'exit' to quit): ")
+            "Enter the path to the screenshot of the website (or type 'exit' to quit): "
+        )
 
-        if image_path.lower() == 'exit':
+        if image_path.lower() == "exit":
             break
 
         try:
-            image_features = get_image_features(
-                image_path, preprocess, device, model)
+            image_features = get_image_features(image_path, preprocess, device, model)
             similarity_scores = get_similarity_scores(
-                image_features, tokenized_descriptions, device, model)
+                image_features, tokenized_descriptions, device, model
+            )
             top_description_index = similarity_scores.argmax()
             top_description = descriptions[top_description_index]
             print(f"Chosen description: {top_description}\n")
