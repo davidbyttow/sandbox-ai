@@ -21,6 +21,12 @@ def leaky_relu_deriv(x, alpha=0.1):
     return dx
 
 
+def softmax(x, axis=-1):
+    x_max = np.max(x, axis=axis, keepdims=True)
+    exps = np.exp(x - x_max)
+    return exps / np.sum(exps, axis=axis, keepdims=True)
+
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 

@@ -16,6 +16,23 @@ class Module:
         raise NotImplementedError
 
 
+class Softmax(Module):
+    def __init__(self, axis=-1):
+        self._act = None
+        self._axis = axis
+
+    def forward(self, x):
+        self._act = util.softmax(x, axis=self._axis)
+        return self._act
+
+    def backward(self, grad):
+        # TODO(d): figure out how to deal with this when there's a cross-entropy loss function
+        return grad
+
+    def update_params(self, lr):
+        pass
+
+
 class LeakyRelu(Module):
     def __init__(self, alpha=0.1):
         self.alpha = alpha
@@ -65,7 +82,7 @@ class LinearLayer(Module):
         return z if self.bias is None else z + self.bias
 
     def backward(self, grad):
-        self._db = np.sum(grad, axis=0, keepdims=True)
+        self._db = np.sum(grad)
         self._dw = grad @ self._x.T
         return self.weight.T @ grad
 

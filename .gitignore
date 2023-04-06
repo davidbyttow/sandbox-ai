@@ -131,5 +131,6 @@ dmypy.json
 localdata/
 
 output-data/
+.cache/
 
 .DS_Store
