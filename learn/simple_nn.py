@@ -71,24 +71,24 @@ class Sequential(Module):
 class LinearLayer(Module):
     def __init__(self, in_features, out_features, bias=True):
         self.weight = np.random.randn(out_features, in_features)
-        self.bias = np.zeros((out_features, 1)) if bias else None
+        self.bias = np.zeros((1, out_features)) if bias else None
         self._x = None
         self._dw = None
         self._db = None
 
     def forward(self, x):
         self._x = x
-        z = self.weight @ x
+        z = x @ self.weight.T
         return z if self.bias is None else z + self.bias
 
     def backward(self, grad):
         self._db = np.sum(grad)
-        self._dw = grad @ self._x.T
-        return self.weight.T @ grad
+        self._dw = grad.T @ self._x
+        return grad @ self.weight
 
     def update_params(self, lr):
-        self.weight -= lr * self._dw
-        self.bias -= lr * self._db
+        self.weight -= lr * self._dw / self._x.shape[0]
+        self.bias -= lr * self._db / self._x.shape[0]
 
 
 class MSELoss(Module):
