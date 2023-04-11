@@ -1,6 +1,12 @@
-# Learning Plan
+# Piano Learning Plan
 
-- [Learning Plan](#learning-plan)
+Student context:
+* Stated goal: "I want to learn how to play the piano."
+* Reason: "I want to be able to play classical music for my friends and family within the next few years",
+* Prior knowledge: "I am at a beginner level and can play a few songs. I have played guitar for many years and have some background in music theory. I don't care much about music history."
+
+***
+- [Piano Learning Plan](#piano-learning-plan)
   - [Piano Technique](#piano-technique)
     - [Hand Positioning](#hand-positioning)
       - [Proper Hand Placement](#proper-hand-placement)
