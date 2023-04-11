@@ -11,21 +11,28 @@ def gen_md_link(name):
 
 
 def gen_href(name):
-    return f'<a id="{gen_anchor(name)}"></a>'
+    return f"<a id='{gen_anchor(name)}'></a>"
 
 
-content = "# Learning Plan\n\n"
-with open(sys.argv[1], "r") as f:
-    data = json.load(f)
+def gen_markdown(data, goal: str, reason: str, knowledge: str):
+    content = "# Learning Plan\n\n"
+
+    content += "Student context:\n"
+    content += f"* Stated goal: {goal}\n"
+    content += f"* Reason: {reason}\n"
+    content += f"* Existing knowledge: {knowledge}\n\n"
+
+    content += "***\n"
     for subject in data:
         link = gen_md_link(subject["title"])
         content += f"* {link}\n"
         for topic in subject["topics"]:
             link = gen_md_link(topic["title"])
             content += f"  * {link}\n"
-            for lesson in topic["lessons"]:
-                link = gen_md_link(lesson["title"])
-                content += f"    * {link}\n"
+            for subtopic in topic["subtopics"]:
+                if "tasks" in subtopic:
+                    link = gen_md_link(subtopic["title"])
+                    content += f"    * {link}\n"
     content += "\n\n"
     for subject in data:
         aid = gen_href(subject["title"])
@@ -37,12 +44,23 @@ with open(sys.argv[1], "r") as f:
             content += f"### {aid}" + topic["title"] + "\n"
             content += topic["desc"] + "\n"
             content += "\n"
-            for lesson in topic["lessons"]:
-                aid = gen_href(subject["title"])
-                content += f"#### {aid}" + lesson["title"] + "\n"
-                if lesson["desc"]:
-                    content += lesson["desc"] + "\n"
+            for subtopic in topic["subtopics"]:
+                if "tasks" in subtopic:
+                    aid = gen_href(subtopic["title"])
+                    content += f"#### {aid}" + subtopic["title"] + "\n"
+                    content += subtopic["desc"] + "\n"
+                    for task in subtopic["tasks"]:
+                        content += f"- [ ] " + task["title"] + "\n"
+                        if "desk" in task:
+                            content += task["desc"] + "\n"
+                        content += "\n"
+                else:
+                    content += f"* " + subtopic["title"] + "\n"
                 content += "\n"
-content += "\n"
+    return content.strip() + "\n"
 
-print(content)
+
+if __name__ == "main":
+    with open(sys.argv[1], "r") as f:
+        data = json.load(f)
+        print(gen_markdown(data, "", "", ""))
