@@ -135,7 +135,9 @@ def parse_items(response: str) -> List[str]:
             print(f"skipped response line: {line}")
             continue
         id = int(num)
-        title, desc = split_at(content, ":")
+        title, desc = (
+            split_at(content, ":") if ":" in content else split_at(content, "-")
+        )
         items.append(
             {
                 "id": id,

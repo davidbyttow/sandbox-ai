@@ -1,4 +1,5 @@
 import json
+import sys
 
 
 def gen_anchor(name):
@@ -14,7 +15,7 @@ def gen_href(name):
 
 
 content = "# Learning Plan\n\n"
-with open("out.json", "r") as f:
+with open(sys.argv[1], "r") as f:
     data = json.load(f)
     for subject in data:
         link = gen_md_link(subject["title"])
