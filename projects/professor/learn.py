@@ -20,17 +20,23 @@ from langchain.docstore import InMemoryDocstore
 TEMPERATURE = 0
 EMBEDDING_SIZE = 1536
 VERBOSE = True
-MODEL = "gpt-4"
-# MODEL = "gpt-3.5-turbo"
+# MODEL = "gpt-4"
+MODEL = "gpt-3.5-turbo"
 
-TOPIC = "neural_networks"
-GOAL = ("I want to learn how to code neural networks.",)
-REASON = (
-    "I want to be able to code FCN, FNN, CNNs and GANs by hand using pytorch, but also understand the math.",
-)
-KNOWLEDGE = (
-    "I am an expert in python already and have a rough knowledge of linear algebra and statistics.",
-)
+TOPIC = "welding"
+GOAL = "I want to learn how to mig weld within a few days"
+REASON = "I want to be able to weld metal together for my professional projects"
+KNOWLEDGE = "I am a professional cabinet maker and I am familiar with tig welding. I need to learn how to mig weld for my projects."
+
+
+# TOPIC = "neural_networks"
+# GOAL = ("I want to learn how to code neural networks.",)
+# REASON = (
+#     "I want to be able to code FCN, FNN, CNNs and GANs by hand using pytorch, but also understand the math.",
+# )
+# KNOWLEDGE = (
+#     "I am an expert in python already and have a rough knowledge of linear algebra and statistics.",
+# )
 
 # TOPIC = "golf"
 # GOAL = "I want to learn how to golf"
@@ -361,7 +367,7 @@ class ProfessorGPT(Chain, BaseModel):
         asyncio.run(self.gather_topics(context=pc, subjects=subjects))
 
         md = gen_markdown(subjects, goal=goal, reason=reason, knowledge=knowledge)
-        with open(f"{TOPIC}_plan.md", "w") as f:
+        with open(f"./examples/{TOPIC}_plan.md", "w") as f:
             f.write(md)
         return {}
 
