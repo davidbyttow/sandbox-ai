@@ -1,18 +1,12 @@
 import asyncio
-import os
-from collections import deque
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any
 from gen_md import gen_markdown
 
-import faiss
 from pydantic import BaseModel, Field
 from langchain import LLMChain, OpenAI, PromptTemplate
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import BaseLLM
-from langchain.vectorstores import FAISS
-from langchain.vectorstores.base import VectorStore
 from langchain.chains.base import Chain
-from langchain.docstore import InMemoryDocstore
 
 
 # TODO(d): refactor this to recursively build topics/subtopics and simplify the code
@@ -51,8 +45,6 @@ KNOWLEDGE = "I am a professional cabinet maker and I am familiar with tig weldin
 
 
 embeddings_model = OpenAIEmbeddings()
-index = faiss.IndexFlatL2(EMBEDDING_SIZE)
-vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
 
 
 def prelude_context(goal: str, reason: str, knowledge: str):
@@ -271,7 +263,6 @@ class ProfessorGPT(Chain, BaseModel):
     subtopic_creation_chain: SubtopicCreationChain = Field(...)
     task_creation_chain: TaskCreationChain = Field(...)
     task_id_counter: int = Field(1)
-    vectorstore: VectorStore = Field(init=False)
 
     class Config:
         arbitrary_types_allowed = True
@@ -380,9 +371,7 @@ class ProfessorGPT(Chain, BaseModel):
         return []
 
     @classmethod
-    def from_llm(
-        cls, llm: BaseLLM, vectorstore: VectorStore, verbose: bool = False, **kwargs
-    ) -> "ProfessorGPT":
+    def from_llm(cls, llm: BaseLLM, verbose: bool = False, **kwargs) -> "ProfessorGPT":
         subject_creation_chain = SubjectCreationChain.from_llm(llm=llm, verbose=verbose)
         topic_creation_chain = TopicCreationChain.from_llm(llm=llm, verbose=verbose)
         subtopic_creation_chain = SubtopicCreationChain.from_llm(
@@ -394,7 +383,6 @@ class ProfessorGPT(Chain, BaseModel):
             topic_creation_chain=topic_creation_chain,
             subtopic_creation_chain=subtopic_creation_chain,
             task_creation_chain=task_creation_chain,
-            vectorstore=vectorstore,
             **kwargs,
         )
 
@@ -406,7 +394,7 @@ class ProfessorGPT(Chain, BaseModel):
 
 llm = OpenAI(temperature=TEMPERATURE, model_name=MODEL)
 
-professor_gpt = ProfessorGPT.from_llm(llm=llm, vectorstore=vectorstore, verbose=VERBOSE)
+professor_gpt = ProfessorGPT.from_llm(llm=llm, verbose=VERBOSE)
 
 professor_gpt(
     {
