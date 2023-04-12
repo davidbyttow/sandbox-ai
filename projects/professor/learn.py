@@ -7,7 +7,10 @@ from langchain import LLMChain, OpenAI, PromptTemplate
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import BaseLLM
 from langchain.chains.base import Chain
+from langchain.chat_models import ChatOpenAI
+import langchain
 
+print(langchain.__file__, langchain.__version__)
 
 # TODO(d): refactor this to recursively build topics/subtopics and simplify the code
 
@@ -267,6 +270,11 @@ class ProfessorGPT(Chain, BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+    @staticmethod
+    def build(model=MODEL, verbose=VERBOSE) -> "ProfessorGPT":
+        llm = OpenAI(temperature=TEMPERATURE, model_name=model)
+        return ProfessorGPT.from_llm(llm=llm, verbose=verbose)
+
     async def gather_tasks(self, context: str, subtopics: List[Dict]):
         jobs = []
         for subtopic in subtopics:
@@ -358,9 +366,7 @@ class ProfessorGPT(Chain, BaseModel):
         asyncio.run(self.gather_topics(context=pc, subjects=subjects))
 
         md = gen_markdown(subjects, goal=goal, reason=reason, knowledge=knowledge)
-        with open(f"./examples/{TOPIC}_plan.md", "w") as f:
-            f.write(md)
-        return {}
+        return {"markdown": md}
 
     @property
     def input_keys(self) -> List[str]:
@@ -368,7 +374,7 @@ class ProfessorGPT(Chain, BaseModel):
 
     @property
     def output_keys(self) -> List[str]:
-        return []
+        return ["markdown"]
 
     @classmethod
     def from_llm(cls, llm: BaseLLM, verbose: bool = False, **kwargs) -> "ProfessorGPT":
@@ -392,14 +398,21 @@ class ProfessorGPT(Chain, BaseModel):
         return this_id
 
 
-llm = OpenAI(temperature=TEMPERATURE, model_name=MODEL)
+def run(goal: str, reason: str, knowledge: str):
+    llm = ChatOpenAI(temperature=TEMPERATURE, model_name=MODEL)
+    professor_gpt = ProfessorGPT.from_llm(llm=llm, verbose=VERBOSE)
+    out = professor_gpt(
+        {
+            "goal": goal,
+            "reason": reason,
+            "knowledge": knowledge,
+        }
+    )
+    return out.get("markdown", None)
 
-professor_gpt = ProfessorGPT.from_llm(llm=llm, verbose=VERBOSE)
 
-professor_gpt(
-    {
-        "goal": GOAL,
-        "reason": REASON,
-        "knowledge": KNOWLEDGE,
-    }
-)
+if __name__ == "__main__":
+    md = run(goal=GOAL, reason=REASON, knowledge=KNOWLEDGE)
+    if md:
+        with open(f"./examples/{TOPIC}_plan.md", "w") as f:
+            f.write(md)

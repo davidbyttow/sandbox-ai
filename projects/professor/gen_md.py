@@ -15,9 +15,9 @@ def gen_href(name):
 
 
 def gen_markdown(data, goal: str, reason: str, knowledge: str):
-    content = "# Learning Plan\n\n"
+    content = "# Learning Hub\n\n"
 
-    content += "Student context:\n"
+    content += "Context:\n"
     content += f"* Stated goal: {goal}\n"
     content += f"* Reason: {reason}\n"
     content += f"* Existing knowledge: {knowledge}\n\n"
