@@ -60,7 +60,7 @@ def gen_markdown(data, goal: str, reason: str, knowledge: str):
     return content.strip() + "\n"
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     with open(sys.argv[1], "r") as f:
         data = json.load(f)
         print(gen_markdown(data, "", "", ""))
