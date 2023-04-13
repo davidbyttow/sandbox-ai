@@ -134,3 +134,4 @@ output-data/
 .cache/
 
 .DS_Store
+.secrets/
