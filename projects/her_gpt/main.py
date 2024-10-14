@@ -28,6 +28,15 @@ def transcribe_audio_file(path):
     return transcribe_file(audio_file)
 
 
+def stream_response(messages):
+    for chunk in openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", messages=messages, stream=True
+    ):
+        text_chunk = chunk["choices"][0]["delta"].get("content")
+        if text_chunk is not None:
+            yield text_chunk
+
+
 def start_chat():
     voices = el.get_available_voices()
     her_voice = next((v for v in voices if v.name() == "Bella"), None)
